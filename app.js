@@ -16,6 +16,10 @@ app.use(express.json());
 app.use("/api/users", UserRouter);
 app.use("/api/auth", LoginRouter);
 
+app.get("/", (req, res) => {
+  res.json({ message: "Hello World!" });
+});
+
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
