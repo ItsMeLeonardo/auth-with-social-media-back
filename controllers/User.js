@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const userExtractor = require("../middlewares/userExtractor");
 const router = require("express").Router();
 const User = require("../models/User");
 
@@ -19,9 +20,28 @@ router.post("/", async (req, res) => {
   });
   try {
     const savedUser = await user?.save();
-    res.json(savedUser);
+    res.status(201).json(savedUser);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.log({ error });
+    res.status(400).json({ error: error.errors });
+  }
+});
+
+router.get("/:id", userExtractor, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id);
+    res.status(200).json(user);
+  } catch (error) {
+    console.log({ error });
+    res.status(400).json({ error: error.errors });
+  }
+});
+
+router.put("/edit", userExtractor, async (req, res) => {
+  const { id } = req.body;
+  if (!id) {
+    return res.status(401).json({ error: "Please enter all fields" });
   }
 });
 

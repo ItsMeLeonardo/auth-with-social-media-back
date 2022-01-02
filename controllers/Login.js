@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const router = require("express").Router();
 const User = require("../models/User");
@@ -14,7 +15,16 @@ router.post("/", async (req, res) => {
     return res.status(401).send({ error: "Invalid credentials" });
   }
 
-  res.status(200).json(user);
+  const userForToken = {
+    id: user._id,
+    email: user.email,
+  };
+  const token = jwt.sign(userForToken, process.env.SECRET);
+
+  res.status(200).json({
+    token,
+    user,
+  });
 });
 
 module.exports = router;
