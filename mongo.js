@@ -9,6 +9,7 @@ mongoose
     console.log("Error connecting to MongoDB: ", err);
   });
 
-process.on("uncaughtException", () => {
+process.on("uncaughtException", (error) => {
   mongoose.connection.close().then(() => console.log("close connection"));
+  console.log({ error });
 });
