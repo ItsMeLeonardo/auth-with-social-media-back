@@ -19,6 +19,7 @@ const userExtractor = (req, res, next) => {
     if (!decodedToken) throw new Error("Invalid token");
     const { id } = decodedToken;
     req.idUser = id;
+
     next();
   } catch (err) {
     console.log({ err });

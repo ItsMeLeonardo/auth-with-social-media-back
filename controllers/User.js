@@ -39,9 +39,25 @@ router.get("/:id", userExtractor, async (req, res) => {
 });
 
 router.put("/edit", userExtractor, async (req, res) => {
-  const { id } = req.body;
-  if (!id) {
-    return res.status(401).json({ error: "Please enter all fields" });
+  const id = req.idUser;
+  const infoToUpdate = { ...req.body };
+
+  try {
+    if (!id) throw new Error("No id provided");
+
+    if (infoToUpdate.password) {
+      infoToUpdate.password = await bcrypt.hash(infoToUpdate.password, 10);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { ...infoToUpdate },
+      { new: true }
+    );
+    res.status(200).json(user);
+  } catch (err) {
+    console.log({ err });
+    return res.status(401).json({ error: err.message });
   }
 });
 
