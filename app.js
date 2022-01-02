@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const UserRouter = require("./controllers/User");
 const LoginRouter = require("./controllers/Login");
-const notFount = require("./middleware/notFound");
+const notFount = require("./middlewares/notFound");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,7 +18,7 @@ app.use("/api/users", UserRouter);
 app.use("/api/auth", LoginRouter);
 
 app.get("/", (req, res) => {
-  res.json({ message: "Hello World!" });
+  res.json({ message: "Hello World! from azure + MongoDB" });
 });
 
 // unknown route
