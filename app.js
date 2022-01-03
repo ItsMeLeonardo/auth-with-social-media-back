@@ -14,6 +14,13 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+app.use(
+  require("express-session")({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 app.use(passport.initialize());
 
 //endpoints

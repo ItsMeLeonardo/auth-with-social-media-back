@@ -15,8 +15,7 @@ const facebookAuth = () => {
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      // TODO: Change to production
-      callbackURL: "http://localhost:5000/api/auth/facebook/callback",
+      callbackURL: "/api/auth/facebook/callback",
       profileFields: ["email", "displayName", "picture"],
     },
     async (accessToken, refreshToken, profile, callback) => {
@@ -26,16 +25,15 @@ const facebookAuth = () => {
         name,
         email,
         avatar: picture.data.url,
-        username: email.slice(0, 20),
       };
 
-      await User.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         { email },
         { ...userFromFacebook },
-        { upsert: true }
+        { upsert: true, new: true }
       );
 
-      callback(null, profile);
+      callback(null, user);
     }
   );
   passport.use(facebookStrategy);
