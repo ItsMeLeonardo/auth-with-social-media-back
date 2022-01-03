@@ -1,11 +1,11 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const passport = require("passport");
 const router = require("express").Router();
 const User = require("../models/User");
 
 const facebookAuth = require("./facebookAuth");
 const twitterAuth = require("./twitterAuth");
+const googleAuth = require("./googleAuth");
 
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
@@ -33,5 +33,6 @@ router.post("/", async (req, res) => {
 
 router.use("/facebook", facebookAuth);
 router.use("/twitter", twitterAuth);
+router.use("/google", googleAuth);
 
 module.exports = router;

@@ -18,7 +18,7 @@ const facebookAuth = () => {
       callbackURL: "/api/auth/facebook/callback",
       profileFields: ["email", "displayName", "picture"],
     },
-    async (accessToken, refreshToken, profile, callback) => {
+    async (token, refreshToken, profile, callback) => {
       const { name, email, picture } = profile._json;
 
       const userFromFacebook = {
