@@ -19,13 +19,12 @@ const googleAuth = () => {
     },
     async (token, refreshToken, profile, callback) => {
       const { name, picture, email } = profile._json;
-      const userFromGoogle = { name, picture, email };
+      let user = await User.findOne({ email });
 
-      const user = await User.findOneAndUpdate(
-        { email },
-        { ...userFromGoogle },
-        { new: true, upsert: true }
-      );
+      if (!user) {
+        const userFromGoogle = { name, avatar: picture, email };
+        user = await User.create(userFromGoogle);
+      }
 
       callback(null, user);
     }

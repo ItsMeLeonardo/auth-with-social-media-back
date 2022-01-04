@@ -20,13 +20,17 @@ const twitterAuth = () => {
     async (token, tokenSecret, profile, callback) => {
       const { name, profile_image_url_https, email } = profile._json;
 
-      const userFromTwitter = { name, email, avatar: profile_image_url_https };
+      let user = await User.findOne({ email });
 
-      const user = await User.findOneAndUpdate(
-        { email },
-        { ...userFromTwitter },
-        { new: true, upsert: true }
-      );
+      if (!user) {
+        const userFromTwitter = {
+          name,
+          email,
+          avatar: profile_image_url_https,
+        };
+        user = await User.create(userFromTwitter);
+      }
+
       callback(null, user);
     }
   );

@@ -21,17 +21,16 @@ const facebookAuth = () => {
     async (token, refreshToken, profile, callback) => {
       const { name, email, picture } = profile._json;
 
-      const userFromFacebook = {
-        name,
-        email,
-        avatar: picture.data.url,
-      };
+      let user = await User.findOne({ email });
 
-      const user = await User.findOneAndUpdate(
-        { email },
-        { ...userFromFacebook },
-        { upsert: true, new: true }
-      );
+      if (!user) {
+        const userFromFacebook = {
+          name,
+          email,
+          avatar: picture.data.url,
+        };
+        user = await User.create(userFromFacebook);
+      }
 
       callback(null, user);
     }
