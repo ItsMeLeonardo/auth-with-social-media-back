@@ -15,7 +15,7 @@ const facebookAuth = () => {
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: "/api/auth/facebook/callback",
+      callbackURL: `${process.env.HOST}/api/auth/facebook/callback`,
       profileFields: ["email", "displayName", "picture"],
     },
     async (token, refreshToken, profile, callback) => {

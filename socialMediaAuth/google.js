@@ -15,7 +15,7 @@ const googleAuth = () => {
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "api/auth/google/callback",
+      callbackURL: `${process.env.HOST}/api/auth/google/callback`,
     },
     async (token, refreshToken, profile, callback) => {
       const { name, picture, email } = profile._json;
