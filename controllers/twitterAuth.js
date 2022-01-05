@@ -9,15 +9,14 @@ router.get("/", passport.authenticate("twitter"));
 router.get(
   "/callback",
   passport.authenticate("twitter", {
-    failureRedirect: "/fail_uwu",
+    failureRedirect: `${process.env.URL_REDIRECT}/login`,
   }),
   (req, res) => {
-    const user = req.user;
-    const { id, email } = user;
-    res.status(200).json({
-      user,
-      token: generateJwt({ id, email }),
-    });
+    const { id, email } = req.user;
+    const token = generateJwt({ id, email });
+    res.redirect(
+      `${process.env.URL_REDIRECT}/auth/social_media?token=${token}`
+    );
   }
 );
 
