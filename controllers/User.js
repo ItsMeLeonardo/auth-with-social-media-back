@@ -2,6 +2,11 @@ const bcrypt = require("bcrypt");
 const userExtractor = require("../middlewares/userExtractor");
 const router = require("express").Router();
 const User = require("../models/User");
+const multer = require("multer");
+const inMemoryStorage = multer.memoryStorage();
+const uploadStrategy = multer({ storage: inMemoryStorage }).single("avatar");
+
+const saveBlob = require("../services/saveBlob");
 
 router.post("/", async (req, res) => {
   const { name, username, email, password } = req.body;
@@ -38,12 +43,22 @@ router.get("/:id", userExtractor, async (req, res) => {
   }
 });
 
-router.put("/edit", userExtractor, async (req, res) => {
+router.put("/edit", userExtractor, uploadStrategy, async (req, res) => {
   const id = req.idUser;
   const infoToUpdate = { ...req.body };
 
   try {
-    if (!id) throw new Error("No id provided");
+    const file = req.file;
+
+    if (file) {
+      const { originalname, buffer } = file;
+      const [avatarUrl, error] = await saveBlob(originalname, buffer);
+
+      if (error) {
+        return res.status(400).json({ error: "cannot save your avatar" });
+      }
+      infoToUpdate.avatar = avatarUrl;
+    }
 
     if (infoToUpdate.password) {
       infoToUpdate.password = await bcrypt.hash(infoToUpdate.password, 10);
@@ -54,6 +69,7 @@ router.put("/edit", userExtractor, async (req, res) => {
       { ...infoToUpdate },
       { new: true }
     );
+
     res.status(200).json(user);
   } catch (err) {
     console.log({ err });
