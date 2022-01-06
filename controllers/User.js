@@ -6,8 +6,10 @@ const multer = require("multer");
 const inMemoryStorage = multer.memoryStorage();
 const uploadStrategy = multer({ storage: inMemoryStorage }).single("avatar");
 
+const generateJwt = require("../utils/generateJwt");
 const saveBlob = require("../services/saveBlob");
 
+// register a new user
 router.post("/", async (req, res) => {
   const { name, username, email, password } = req.body;
 
@@ -24,15 +26,19 @@ router.post("/", async (req, res) => {
     passwordHash,
     avatar: process.env.DEFAULT_AVATAR,
   });
+
   try {
     const savedUser = await user?.save();
-    res.status(201).json(savedUser);
+    const { id, email } = savedUser;
+    const token = generateJwt({ id, email });
+    res.status(201).json({ user: savedUser, token });
   } catch (error) {
     console.log({ error });
     res.status(400).json({ error: error.errors });
   }
 });
 
+// get data of user
 router.get("/", userExtractor, async (req, res) => {
   const id = req.idUser;
   try {
@@ -44,6 +50,7 @@ router.get("/", userExtractor, async (req, res) => {
   }
 });
 
+// update user data
 router.put("/edit", userExtractor, uploadStrategy, async (req, res) => {
   const id = req.idUser;
   const infoToUpdate = { ...req.body };
