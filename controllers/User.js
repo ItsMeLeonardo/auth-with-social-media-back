@@ -22,6 +22,7 @@ router.post("/", async (req, res) => {
     username,
     email,
     passwordHash,
+    avatar: process.env.DEFAULT_AVATAR,
   });
   try {
     const savedUser = await user?.save();
@@ -32,8 +33,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/:id", userExtractor, async (req, res) => {
-  const { id } = req.params;
+router.get("/", userExtractor, async (req, res) => {
+  const id = req.idUser;
   try {
     const user = await User.findById(id);
     res.status(200).json(user);
